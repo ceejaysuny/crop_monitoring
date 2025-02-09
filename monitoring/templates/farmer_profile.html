@@ -1,0 +1,89 @@
+{% extends 'dashboard_base.html' %}
+
+
+{% load static %}
+
+{% block title %}Farmer Profile - Crop Monitoring{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Farmer Profile</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'farmer_profile' %}">
+                        {% csrf_token %}
+                        
+                        <!-- Display Form Errors -->
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Error!</strong> Please correct the following:
+                            <ul>
+                                {% for field, error in form.errors.items %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <!-- Read-only Fields -->
+                        <div class="mb-3">
+                            <label class="form-label"><b>First Name</b></label>
+                            <input type="text" class="form-control" value="{{ user.first_name }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><b>Last Name</b></label>
+                            <input type="text" class="form-control" value="{{ user.last_name }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Farmer ID</strong></label>
+                            <input type="text" class="form-control" value="{{ farmer.id }}" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><strong>User ID</strong></label>
+                            <input type="text" class="form-control" value="{{ farmer.user_id }}" readonly>
+                        </div>
+
+                        <!-- Editable Fields -->
+                        <div class="mb-3">
+                            <label for="phone_number" class="form-label"><b>Phone Number</b></label>
+                            <input type="tel" class="form-control" id="phone_number" name="phone_number" 
+                                   value="{{ farmer.phone_number }}" required 
+                                   pattern="\+?[0-9]{1,3}[0-9]{10,15}" title="Enter valid phone number with country code">
+                            <div class="form-text">Format: +1XXXXXXXXXX (10-15 digits)</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="address" class="form-label"><b>Address</b></label>
+                            <textarea class="form-control" id="address" name="address" 
+                                      rows="3" required maxlength="255">{{ farmer.address }}</textarea>
+                            <div class="form-text">Maximum 255 characters</div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-custom">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Client-side validation for phone number
+document.getElementById('phone_number').addEventListener('input', function(e) {
+    this.setCustomValidity('');
+    if (!this.validity.valid) {
+        this.setCustomValidity('Please enter a valid phone number (10-15 digits)');
+    }
+});
+</script>
+{% endblock %}

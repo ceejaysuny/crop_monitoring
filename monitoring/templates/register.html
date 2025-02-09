@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/registration.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<style>
+    .error-message {
+        color: red;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card p-4 shadow-lg" style="max-width: 500px; width: 100%;">
+        <h2 class="text-center mb-4">Register</h2>
+        <form id="registration-form" method="post" novalidate>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" id="submit-button" class="btn btn-custom btn-primary w-100 mt-3" disabled>Register</button>
+        </form>
+    </div>
+</div>
+
+<script>
+ document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('registration-form');
+    const submitButton = document.getElementById('submit-button');
+    const inputs = form.querySelectorAll('input, select, textarea');
+
+    // Real-time validation for each input
+    inputs.forEach(input => {
+        input.addEventListener('input', () => {
+            validateField(input);
+        });
+    });
+
+    const validateField = async (input) => {
+        const formData = new FormData(form);
+        formData.set(input.name, input.value);
+        formData.set('validation_only', 'true');
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: formData,
+                credentials: 'include'
+            });
+
+            if (response.status === 400) {
+                const data = await response.json();
+                if (data.errors && data.errors[input.name]) {
+                    showError(input, data.errors[input.name][0]);
+                } else {
+                    clearError(input);
+                }
+            } else {
+                clearError(input);
+            }
+        } catch (error) {
+            console.error('Validation error:', error);
+        }
+        toggleSubmitButton();
+    };
+
+    const showError = (input, message) => {
+        clearError(input);
+        const error = document.createElement('div');
+        error.className = 'error-message';
+        error.textContent = message;
+        input.parentNode.appendChild(error);
+        input.classList.add('is-invalid');
+    };
+
+    const clearError = (input) => {
+        const error = input.parentNode.querySelector('.error-message');
+        if (error) error.remove();
+        input.classList.remove('is-invalid');
+    };
+
+    const toggleSubmitButton = () => {
+        const hasErrors = form.querySelectorAll('.is-invalid').length > 0;
+        const isFormComplete = Array.from(inputs).every(input => input.value.trim() !== '');
+        submitButton.disabled = hasErrors || !isFormComplete;
+    };
+
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: formData,
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                swal("Success!", "Registration successful!", "success").then(() => {
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url;
+                    }, 1000);
+                });
+            } else {
+                if (data.errors) {
+                    inputs.forEach(clearError);
+                    
+                    Object.entries(data.errors).forEach(([field, messages]) => {
+                        const input = form.querySelector(`[name="${field}"]`);
+                        if (input) showError(input, messages[0]);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            swal("Error!", "An unexpected error occurred. Please try again.", "error");
+        }
+    });
+
+    toggleSubmitButton();
+});
+
+</script>
+{% endblock %}

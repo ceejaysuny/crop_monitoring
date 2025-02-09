@@ -1,0 +1,557 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Crop Monitoring Application">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>{% block title %}Crop Monitoring{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    
+    <style>
+        .accordion {
+          background-color: #1B5E20;
+          color: #f1efef;
+          cursor: pointer;
+          padding: 18px;
+          width: 100%;
+          border: solid 1px #f1efef;
+          text-align: left;
+          outline: none;
+          font-size: 18px;
+          font-style: bold;
+          transition: 0.4s;
+        }
+        
+        .active, .accordion:hover {
+          background-color: #2db86c;
+        }
+        
+        .accordion:after {
+          content: '\002B';
+          color: White;
+          font-weight: bold;
+          font-size: 18px;
+          float: right;
+          margin-left: 5px;
+        }
+        
+        .active:after {
+          content: "\2212";
+          color: White;
+          font-weight: bold;
+          font-size: 18px;
+        }
+        
+        .panel {
+          padding: 0 18px;
+          background-color: white;
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.2s ease-out;
+        }
+        </style>
+    
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F8F9FA;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            flex: 1;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #1B5E20 !important;
+            position: sticky;
+            top: 0;
+            z-index: 1030; /* Ensures it stays on top */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand, .navbar-nav .nav-link {
+            color: white !important;
+            font-weight: bold;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #FFD700 !important;
+        }
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+
+        /* Buttons */
+        .btn-custom {
+            background-color: #2E8B57;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        .btn-custom:hover {
+            background-color: #FFD700;
+            color: black;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #1B5E20;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            padding: 10px 0;
+            margin-top: auto; /* Keeps the footer at the bottom */
+        }
+
+          /* Message Styles */
+          .messages {
+            position: relative;
+            margin-top: 20px;
+        }
+        .alert {
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .alert i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .btn-close {
+            margin-left: auto;
+            font-size: 14px;
+        }
+
+        /* Style form inputs */
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-group button {
+        background-color: #2E8B57;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .form-group button:hover {
+        background-color: #3CB371;
+
+        
+    }           
+    </style>
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          
+            <a class="navbar-brand" href="{% url 'home' %}">Crop Monitoring</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <span class="navbar-text text-white fw-bold me-3">
+                Welcome {{ user.first_name }} !
+            </span>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                   
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'SetupField' %}">SetupField</a>
+                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'farmer_profile' %}">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                    <!--
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    -->
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+   <!-- Dynamic Messages -->
+   <div class="container messages">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {% if message.tags == "success" %}
+                    <i class="fas fa-check-circle"></i>
+                {% elif message.tags == "info" %}
+                    <i class="fas fa-info-circle"></i>
+                {% elif message.tags == "warning" %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                {% elif message.tags == "error" %}
+                    <i class="fas fa-times-circle"></i>
+                {% endif %}
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+
+
+
+
+
+    <!-- Content Section -->
+    <div class=" container mt-4">
+
+
+        <h2>Field Management</h2>
+<p>Select a menu to setup data required for crop field operations.</p>
+<button class="accordion">AddCropType </button>
+<div class="panel">
+  <p>
+       <!-- Add Crop Type Tab -->
+    <div id="addcroptype" class="tabcontent">
+        <h3>Add Crop Type</h3>
+        <form method="post" action="{% url 'add_crop_type' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="crop_name">Crop Name:</label>
+                <input type="text" id="crop_name" name="crop_name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Add Crop Type</button>
+            </div>
+        </form>
+    </div> 
+
+  </p>
+</div>
+
+<button class="accordion">CreateField</button>
+<div class="panel">
+  <p>
+
+        <!-- Create Field Tab -->
+<div id="createfield" class="tabcontent">
+    <h3>Create Field</h3>
+    <form method="post" action="{% url 'create_field' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="field_name"  >Field Name:</label>
+            <input type="text" id="field_name" name="field_name" placeholder="Enter field name" required>
+        </div>
+        <div class="form-group">
+            <label for="field_size" >Field Size (hectares):</label>
+            <input type="number" id="field_size" name="field_size" step="0.01" placeholder="Enter field size in hectares" required>
+        </div>
+        <div class="form-group">
+            <label for="crop_type">Crop Type:</label>
+            <select id="crop_type" name="crop_type" required>
+                {% for crop in crop_types %}
+                    <option value="{{ crop.id }}">{{ crop.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- Add latitude and longitude fields -->
+        <div class="form-group">
+            <label for="latitude" >Latitude:</label>
+            <input type="text" id="latitude" name="latitude" placeholder="Latitude is need for Field location" required>
+        </div>
+        <div class="form-group">
+            <label for="longitude" >Longitude:</label>
+            <input type="text" id="longitude" name="longitude" placeholder="Longitude is need for Field location" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">Create Field</button>
+        </div>
+    </form>
+</div>
+   </p>
+</div>
+
+<button class="accordion">AddSensor</button>
+<div class="panel">
+  <p>
+        <!-- Add Sensor Tab -->
+    <div id="addsensor" class="tabcontent">
+        <h3>Add Sensor</h3>
+        <form method="post" action="{% url 'add_sensor' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="sensor_type">Sensor Type:</label>
+                <input type="text" id="sensor_type" name="sensor_type" required>
+            </div>
+            <div class="form-group">
+                <label for="unit">Unit:</label>
+                <input type="text" id="unit" name="unit" required>
+            </div>
+            <div class="form-group">
+                <label for="field">Field:</label>
+                <select id="field" name="field" required>
+                    {% for field in fields %}
+                        <option value="{{ field.id }}">{{ field.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Add Sensor</button>
+            </div>
+        </form>
+    </div>
+</p>
+</div>
+
+<button class="accordion">RecordDetectedPest</button>
+<div class="panel">
+  <p>
+     <!-- Record Detected Pest Tab -->
+    <div id="recorddetectedpest" class="tabcontent">
+        <h3>Record Detected Pest</h3>
+        <form method="post" action="{% url 'record_pest' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="pest_name">Pest Name:</label>
+                <input type="text" id="pest_name" name="pest_name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="severity_level">Severity Level:</label>
+                <input type="text" id="severity_level" name="severity_level">
+            </div>
+            <div class="form-group">
+                <label for="image">Image:</label>
+                <input type="file" id="image" name="image">
+            </div>
+            <div class="form-group">
+                <label for="crop_types">Affected Crop Types:</label>
+                <select id="crop_types" name="crop_types" multiple>
+                    {% for crop in crop_types %}
+                        <option value="{{ crop.id }}">{{ crop.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Record Pest</button>
+            </div>
+        </form>
+    </div>
+</p>
+</div>
+
+<button class="accordion">RecordCropHealthIssue</button>
+<div class="panel">
+  <p>
+         <!-- Record Crop Health Issue Tab -->
+    <div id="recordcrophealthissue" class="tabcontent">
+        <h3>Record Crop Health Issue</h3>
+        <form method="post" action="{% url 'record_health_issue' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="issue_type">Issue Type:</label>
+                <input type="text" id="issue_type" name="issue_type" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="image">Image:</label>
+                <input type="file" id="image" name="image">
+            </div>
+            <div class="form-group">
+                <label for="field">Field:</label>
+                <select id="field" name="field" required>
+                    {% for field in fields %}
+                        <option value="{{ field.id }}">{{ field.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Record Issue</button>
+            </div>
+        </form>
+    </div>
+  </p>
+</div>
+
+<button class="accordion">AddFertilizer</button>
+<div class="panel">
+  <p>
+          <!-- Add Fertilizer Tab -->
+   <!-- Add Fertilizer Tab -->
+<div id="addfertilizer" class="tabcontent">
+    <h3>Add Fertilizer</h3>
+    <form method="post" action="{% url 'add_fertilizer' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="fertilizer_type">Fertilizer Type:</label>
+            <input type="text" id="fertilizer_type" name="fertilizer_type" required>
+        </div>
+        <div class="form-group">
+            <label for="amount">Amount (kg):</label>
+            <input type="number" id="amount" name="amount" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label for="field">Field:</label>
+            <select id="field" name="field" required>
+                {% for field in fields %}
+                    <option value="{{ field.id }}">{{ field.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- New Date Field -->
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">Add Fertilizer</button>
+        </div>
+    </form>
+</div>
+
+  </p>
+</div>
+
+<button class="accordion">AddIrrigation</button>
+<div class="panel">
+  <p>
+     <!-- Add Irrigation Tab -->
+    <div id="addirrigation" class="tabcontent">
+        <h3>Add Irrigation</h3>
+        <form method="post" action="{% url 'add_irrigation' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="start_time">Start Time:</label>
+                <input type="time" id="start_time" name="start_time" required>
+            </div>
+            <div class="form-group">
+                <label for="end_time">End Time:</label>
+                <input type="time" id="end_time" name="end_time" required>
+            </div>
+            <div class="form-group">
+                <label for="interval">Interval (days):</label>
+                <input type="number" id="interval" name="interval" required>
+            </div>
+            <div class="form-group">
+                <label for="field">Field:</label>
+                <select id="field" name="field" required>
+                    {% for field in fields %}
+                        <option value="{{ field.id }}">{{ field.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Add Irrigation</button>
+            </div>
+        </form>
+    </div>
+  </p>
+</div>
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Crop Monitoring Project. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        
+        for (i = 0; i < acc.length; i++) {
+          acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+              panel.style.maxHeight = null;
+            } else {
+              panel.style.maxHeight = panel.scrollHeight + "px";
+            } 
+          });
+        }
+        </script>
+
+</body>
+</html>

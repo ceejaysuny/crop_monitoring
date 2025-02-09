@@ -1,0 +1,284 @@
+
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #F8F9FA;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    flex: 1;
+}
+
+/* Navbar */
+
+.navbar {
+    background-color: #1B5E20 !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: white !important;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-nav .nav-link:hover {
+    color: #FFD700 !important;
+}
+
+
+/* Home Page */
+.display-4 {
+    font-weight: bold;
+    color: #343a40;
+}
+
+.lead {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.card {
+    transition: transform 0.3s ease-in-out;
+    border-radius: 12px;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Buttons */
+button, .btn {
+    background-color: #2E8B57;
+    color: white;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover, .btn:hover {
+    background-color: #FFD700;
+    color: #1B5E20;
+}
+
+/* Registration Form */
+.container.mx-auto {
+    max-width: 500px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form p {
+    width: 100%;
+    text-align: left;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn-custom {
+    background-color: #2E8B57;
+    color: white;
+    border: none;
+}
+.btn-custom:hover {
+    background-color: #FFD700;
+    color: black;
+}
+
+/* Footer */
+footer {
+    background-color: #1B5E20;
+    color: white !important; /* Ensure text color is always white */
+    padding: 10px 0; /* Add padding to the footer */
+    text-align: center;
+    font-size: 14px; /* Adjust font size for readability */
+    position: relative;
+    z-index: 1;
+    -webkit-transform: translateZ(0); /* Forces hardware acceleration */
+    transform: translateZ(0); /* Forces hardware acceleration */
+    -webkit-font-smoothing: antialiased; /* Smoothens font rendering */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* General Styles */
+
+/*
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #F8F9FA;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    flex: 1;
+}
+
+*/
+/* Navbar */
+
+/*
+.navbar {
+    background-color: #1B5E20;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: white !important;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #FFD700 !important;
+}
+
+*/
+/* Home Page */
+
+/*
+.display-4 {
+    font-weight: bold;
+    color: #343a40;
+}
+
+.lead {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.card {
+    transition: transform 0.3s ease-in-out;
+    border-radius: 12px;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Buttons */
+
+/*
+button, .btn {
+    background-color: #2E8B57;
+    color: white;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover, .btn:hover {
+    background-color: #FFD700;
+    color: #1B5E20;
+}
+
+*/
+
+/* Registration Form */
+
+/*
+.container.mx-auto {
+    max-width: 500px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form p {
+    width: 100%;
+    text-align: left;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+*/
+/* Footer */
+
+/*
+footer {
+    background-color: #1B5E20;
+    color: white !important; 
+    padding: 10px 0; 
+    text-align: center;
+    font-size: 14px; 
+    position: relative;
+    z-index: 1;
+    -webkit-transform: translateZ(0); 
+    transform: translateZ(0); 
+    -webkit-font-smoothing: antialiased; 
+}
+
+*/

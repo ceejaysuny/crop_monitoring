@@ -1,0 +1,126 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #F8F9FA;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    flex: 1;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #1B5E20;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: white !important;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #FFD700 !important;
+}
+
+/* Home Page */
+.display-4 {
+    font-weight: bold;
+    color: #343a40;
+}
+
+.lead {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.card {
+    transition: transform 0.3s ease-in-out;
+    border-radius: 12px;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Buttons */
+button, .btn {
+    background-color: #2E8B57;
+    color: white;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover, .btn:hover {
+    background-color: #FFD700;
+    color: #1B5E20;
+}
+
+/* Registration Form */
+.container.mx-auto {
+    max-width: 500px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form p {
+    width: 100%;
+    text-align: left;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-custom {
+    background-color: #2E8B57;
+    color: white;
+    border: none;
+}
+.btn-custom:hover {
+    background-color: #FFD700;
+    color: black;
+}
+
+/* Footer */
+footer {
+    background: #1B5E20;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: auto;
+}

@@ -1,0 +1,346 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block head %}
+<style>
+    /* Accordion Styles */
+    .accordion {
+        background-color: #2E8B57; /* Green color for buttons */
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 20px;
+        font-weight: bold;
+        transition: 0.4s;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+
+    .active, .accordion:hover {
+        background-color: #3CB371; /* Lighter green on hover/active */
+    }
+
+    .accordion:after {
+        content: '\002B'; /* Plus sign */
+        color: white;
+        font-weight: bold;
+        float: right;
+        margin-left: 5px;
+    }
+
+    .active:after {
+        content: "\2212"; /* Minus sign */
+    }
+
+    .panel {
+        padding: 0 18px;
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    /* Weather Card Styles */
+    .weather-card {
+        background: linear-gradient(135deg, #6B8DD6 0%, #8E37D7 100%);
+        border-radius: 15px;
+        color: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .weather-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .weather-metric {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .weather-metric i {
+        margin-right: 10px;
+        width: 30px;
+        text-align: center;
+    }
+
+    .weather-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;  
+       
+    }
+    
+    /* Weather Forecast Table Styles */
+    .forecast-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: white;
+    }
+
+    .forecast-table th,
+    .forecast-table td {
+        padding: 12px 15px;
+        text-align: center;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .forecast-table th {
+        background-color: #2E8B57; /* Green header */
+        color: white;
+        font-weight: bold;
+        border-bottom: 2px solid #1C5D3C;
+    }
+
+    .forecast-table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .forecast-table tbody tr:nth-child(even) {
+        background-color: #f3f3f3;
+    }
+
+    .forecast-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .forecast-table .hidden-row {
+        display: none; /* Hide extra rows by default */
+    }
+
+    /* Show More Button Style */
+    .show-more-btn {
+        display: block;
+        margin: 10px auto;
+        padding: 10px 20px;
+        background-color: #2E8B57;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .show-more-btn:hover {
+        background-color: #3CB371; /* Lighter green on hover */
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .forecast-table th,
+        .forecast-table td {
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+    }
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Crop Monitoring Dashboard</h1>
+    <p>Here you can monitor your crops, view sensor data, and more.</p>
+
+    <!-- Accordion for Fields -->
+    {% for field in fields %}
+    <button class="accordion">Click Here to View {{ field.name }} Crop Field Dashboard</button>
+    <div class="panel">
+        <!-- Current Weather Data -->
+        <div class="weather-card">
+            <div class="weather-header">
+                <h5>Current Weather</h5>
+                <i class="fas fa-cloud-sun weather-icon"></i>
+            </div>
+            {% if field.current_weather %}
+            <div class="weather-metrics">
+                <div class="weather-metric">
+                    <i class="fas fa-thermometer-half"></i>
+                    Temperature: {{ field.current_weather.temperature }}°C
+                </div>
+                <div class="weather-metric">
+                    <i class="fas fa-tint"></i>
+                    Humidity: {{ field.current_weather.humidity }}%
+                </div>
+                <div class="weather-metric">
+                    <i class="fas fa-cloud-rain"></i>
+                    Precipitation: {{ field.current_weather.precipitation }} mm
+                </div>
+                <small class="text-muted d-block mt-2">
+                    Updated: {{ field.current_weather.timestamp|timesince }} ago
+                </small>
+            </div>
+            {% else %}
+            <div class="text-center py-3">
+                <i class="fas fa-exclamation-triangle"></i>
+                No current weather data available
+            </div>
+            {% endif %}
+        </div>
+
+         <!-- Weather Forecast -->
+         <div class="card mb-4">
+            <div class="card-header">Weather Forecast</div>
+            <div class="card-body">
+                {% if field.forecast_weather %}
+                <table class="forecast-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Temperature (°C)</th>
+                            <th>Humidity (%)</th>
+                            <th>Precipitation (mm)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for forecast in field.forecast_weather %}
+                        <tr class="{% if forloop.counter > 5 %}hidden-row{% endif %}">
+                            <td>{{ forecast.timestamp|date:"Y-m-d H:i" }}</td>
+                            <td>{{ forecast.temperature }}</td>
+                            <td>{{ forecast.humidity }}</td>
+                            <td>{{ forecast.precipitation }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button class="show-more-btn" onclick="toggleForecastRows(this)">Show More</button>
+                {% else %}
+                <p class="text-center">No forecast data available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sensor Data -->
+        <div class="card mb-4">
+            <div class="card-header">Recent Sensor Data</div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Sensor ID</th>
+                            <th>Reading</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in field.sensor_data %}
+                        <tr>
+                            <td>{{ data.sensor_id }}</td>
+                            <td>{{ data.reading }}</td>
+                            <td>{{ data.timestamp }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">No sensor data available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Crop Health Issues -->
+        <div class="card mb-4">
+            <div class="card-header">Recent Crop Health Issues</div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Issue</th>
+                            <th>Reported At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for issue in field.crop_health_issues %}
+                        <tr>
+                            <td>{{ issue.issue }}</td>
+                            <td>{{ issue.reported_at }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2">No issues reported.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Irrigation Schedules -->
+        <div class="card">
+            <div class="card-header">Active Irrigation Schedules</div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for schedule in field.irrigation_schedules %}
+                    <li class="list-group-item">
+                        Start: {{ schedule.start_time }} - End: {{ schedule.end_time }}
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">No active schedules.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Accordion JavaScript -->
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        });
+    }
+
+   // Function to toggle forecast rows
+    function toggleForecastRows(button) {
+        // Find the nearest table body relative to the clicked button
+        const tableBody = button.closest('.card-body').querySelector('.forecast-table tbody');
+        const rows = tableBody.querySelectorAll('tr');
+        let allRowsVisible = true;
+
+        rows.forEach((row, index) => {
+            if (index >= 5) {
+                row.classList.toggle('hidden-row');
+                if (row.classList.contains('hidden-row')) {
+                    allRowsVisible = false;
+                }
+            }
+        });
+
+        // Update the button label based on visibility state
+        button.textContent = allRowsVisible ? 'Show Less' : 'Show More';
+    }
+
+</script>
+{% endblock %}
